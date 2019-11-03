@@ -1,0 +1,35 @@
+.xf2-forum-widget, .xf2-forum-title  {
+	text-align:left !important;
+}
+.xf2-forum-title {
+	font-weight: 600;
+	font-size: 12px !important;
+	line-height: 1.5em;
+	margin: 0px !important;
+}
+.xf2-forum-link, .xf2-forum-link a  {
+	text-align:center !important;
+	margin-bottom:0px !important;
+	margin-left:0px !important;
+	font-weight: 600 !important;
+	font-size: 12px !important;
+	line-height: 1.5em;
+}
+.xf2-forum-smalltext {
+	font-weight: 400;
+	font-size: 10.5px !important;
+	line-height: 1.5em;
+}
+
+.xf2-forum-thread li {
+	border-bottom: none !important;
+}
+
+.xf2-forum-thread {
+	margin-bottom: 5px;
+	border-bottom: none !important;
+}
+
+.xf2-forum-list {
+	list-style: none;
+}
