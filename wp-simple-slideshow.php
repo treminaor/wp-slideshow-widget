@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: XenForo 2.x Latest Posts Widget
+Plugin Name: WP Simple Slideshow Widget
 Plugin URI: https://github.com/andyking93
-Description: Adds a widget for displaying the latest posts from a XenForo 2.x installation. Must be using ThemeHouse XPress integration.
-Version: 1.0
+Description: Adds a widget to display a slideshow of images in a widget.
+Version: 0.1
 Author: Andy King
 Author URI: https://github.com/andyking93
 
