@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: WP Simple Slideshow Widget
+Plugin Name: WP Slideshow Widget
 Plugin URI: https://github.com/andyking93
 Description: Adds a widget to display a slideshow of images in a widget.
 Version: 0.1
