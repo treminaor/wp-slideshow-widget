@@ -12,7 +12,7 @@ Author URI: https://github.com/andyking93
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-class wp_simple_slideshow {
+class wp_slideshow_widget_plugin {
 
     public function __construct() {
 
@@ -39,19 +39,19 @@ class wp_simple_slideshow {
     public function constants() {
 
         // Set constant path to the plugin directory.
-        define( 'WPSS_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
+        define( 'WPSW_DIR', trailingslashit( plugin_dir_path( __FILE__ ) ) );
 
         // Set the constant path to the plugin directory URI.
-        define( 'WPSS_URI', trailingslashit( plugin_dir_url( __FILE__ ) ) );
+        define( 'WPSW_URI', trailingslashit( plugin_dir_url( __FILE__ ) ) );
 
         // Set the constant path to the includes directory.
-        define( 'WPSS_INCLUDES', WPSS_DIR . trailingslashit( 'includes' ) );
+        define( 'WPSW_INCLUDES', WPSW_DIR . trailingslashit( 'includes' ) );
 
         // Set the constant path to the includes directory.
-        define( 'WPSS_CLASS', WPSS_DIR . trailingslashit( 'classes' ) );
+        define( 'WPSW_CLASS', WPSW_DIR . trailingslashit( 'classes' ) );
 
         // Set the constant path to the assets directory.
-        define( 'WPSS_CSS', WPSS_URI . trailingslashit( 'css' ) );
+        define( 'WPSW_CSS', WPSW_URI . trailingslashit( 'css' ) );
         
     }
 
@@ -69,15 +69,15 @@ class wp_simple_slideshow {
 
     public function enqueue_scripts()
     {
-        wp_register_style('wp-simple-slideshow', WPSS_CSS . 'widget.css', array(), '1.0');
-        wp_enqueue_style('wp-simple-slideshow');
+        wp_register_style('wp-slideshow-widget', WPSW_CSS . 'widget.css', array(), '1.0');
+        wp_enqueue_style('wp-slideshow-widget');
     }
 
     public function register_widget() {
-        require_once( WPSS_CLASS . 'widget.php' );
-        register_widget( 'WP_Simple_Slideshow_Widget' );
+        require_once( WPSW_CLASS . 'widget.php' );
+        register_widget( 'WP_Slideshow_Widget' );
     }
 
 }
 
-new WP_Simple_Slideshow;
+new wp_slideshow_widget_plugin;
