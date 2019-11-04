@@ -3,7 +3,7 @@
 	<label for="<?php echo $this->get_field_id( 'title' ); ?>">
 		<?php _e( 'Widget Title', 'wp_slideshow_widget_plugin' ); ?>
 	</label>
-	<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
+	<input class="widefat" placeholder="none" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
 </p>
 
 <p>
@@ -46,8 +46,10 @@ jQuery(function($){
 		var custom_uploader;
 		var attachment;
 
+		//Intialize form state for empty slideshow. By default the form php assumes the slide is populated with data on load.
 		if(selectBoxLength == 0) {
 			uploadButton.hide();
+			selectBox.prop('disabled', true);
 		}
 
 		/**
@@ -60,6 +62,7 @@ jQuery(function($){
 				selectBoxLength++;
 				
 				emptyWarning.hide();
+				selectBox.prop('disabled', false);
 				uploadButton.html('Upload Image');
 				uploadButton.show();
 				previewArea.empty();
@@ -100,7 +103,7 @@ jQuery(function($){
 				console.log('selectBox has no entries now');
 			}
 			
-
+			allowWidgetSaveChanges();
 			rebuildOptionValues();
 			updateSlideIndex();
 		});
@@ -139,9 +142,17 @@ jQuery(function($){
 		        uploadButton.html('Remove Image');
 		        $(selectBox.prop('options')[selectBox.prop('selectedIndex')]).attr('name', attachment.id);
 		        setPreviewImage(attachment.url);
+		        allowWidgetSaveChanges();
 		    })
 		    .open();
 		});
+
+		/**
+		 * WordPress doesn't see change events on dynamically added elements, so we can control when changes are detected by manually triggering a change on any element.
+		 */
+		function allowWidgetSaveChanges() {
+			addButton.trigger('change');
+		}
 
 		/**
 		 * Returns the selected option object.
@@ -165,6 +176,7 @@ jQuery(function($){
 			else{
 				uploadButton.hide();
 				emptyWarning.show();
+				selectBox.prop('disabled', true);
 			}
 
 		}
