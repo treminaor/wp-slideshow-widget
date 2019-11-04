@@ -26,7 +26,7 @@ class wp_slideshow_widget_plugin {
         add_action( 'plugins_loaded', array( &$this, 'includes' ), 3 );
 
         // Load the admin style.
-        add_action( 'admin_enqueue_scripts', array( &$this, 'admin_style' ) );
+        add_action( 'admin_enqueue_scripts', array( &$this, 'admin_enqueue_scripts' ) );
 
         // Register widget.
         add_action( 'widgets_init', array( &$this, 'register_widget' ) );
@@ -52,6 +52,9 @@ class wp_slideshow_widget_plugin {
 
         // Set the constant path to the assets directory.
         define( 'WPSW_CSS', WPSW_URI . trailingslashit( 'css' ) );
+
+         // Set the constant path to the assets directory.
+        define( 'WPSW_JS', WPSW_URI . trailingslashit( 'js' ) );
         
     }
 
@@ -63,12 +66,13 @@ class wp_slideshow_widget_plugin {
 
     }
 
-    public function admin_style() {
+    public function admin_enqueue_scripts() {
 
     }
 
     public function enqueue_scripts()
     {
+        wp_enqueue_media();
         wp_register_style('wp-slideshow-widget', WPSW_CSS . 'widget.css', array(), '1.0');
         wp_enqueue_style('wp-slideshow-widget');
     }
