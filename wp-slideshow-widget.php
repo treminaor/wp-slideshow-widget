@@ -67,12 +67,11 @@ class wp_slideshow_widget_plugin {
     }
 
     public function admin_enqueue_scripts() {
-
+        wp_enqueue_media();
     }
 
     public function enqueue_scripts()
     {
-        wp_enqueue_media();
         wp_register_style('wp-slideshow-widget', WPSW_CSS . 'widget.css', array(), '1.0');
         wp_enqueue_style('wp-slideshow-widget');
     }
