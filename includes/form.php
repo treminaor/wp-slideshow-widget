@@ -23,12 +23,8 @@
 	</select>
 	<button id="add_slide" type="button">Add</button>
 	<button id="remove_slide" type="button">Remove</button>
+	<span id="wpsw_empty_warning"><br><em>Slideshow is empty, add a slide to begin.</em></span>
 	<div id="wpsw_image_preview">
-		<?php
-			if($index == 0) {
-				echo "<span id=\"wpsw_empty_warning\"><br><em>Slideshow is currently empty</em></span>";
-			}
-		?>
 	</div>
 	<button class="wpsw_upload_button" type="button">Upload Image</button>
 </p>
@@ -41,6 +37,7 @@ jQuery(function($){
 		var selectBox = $('#' + selectID);
 		var selectBoxLength = selectBox.length - 1;
 		var widgetContainer = selectBox.closest('.widget-content');
+		var emptyWarning = widgetContainer.children('#wpsw_empty_warning');
 		var previewArea = widgetContainer.children('#wpsw_image_preview');
 		var addButton = widgetContainer.children('#add_slide');
 		var removeButton = widgetContainer.children('#remove_slide');
@@ -61,10 +58,10 @@ jQuery(function($){
 				selectBox.append('<option value="' + selectBoxLength + '">' + selectBoxLength + '</option>');
 				selectBox.val(selectBoxLength);
 				selectBoxLength++;
-				$('#wpsw_empty_warning').remove();
 				
-				uploadButton.show();
+				emptyWarning.hide();
 				uploadButton.html('Upload Image');
+				uploadButton.show();
 				previewArea.empty();
 			}
 			else
@@ -75,27 +72,35 @@ jQuery(function($){
 		 * Remove a slide
 		 */
 		removeButton.on('click', function () {
-			console.log('Current selectBoxLength: ' + selectBoxLength);
+			var oldLength = selectBoxLength;
 			var newLength = selectBoxLength - 1;
-			console.log('Proposed newLength: ' + newLength);
 			if(selectBoxLength - 1 < 0) {
 				newLength = 0;
 			}
-			console.log('Finalized selectBoxLength: ' + newLength);
 			var removeThis = selectBox.prop('options')[selectBox.prop('selectedIndex')];
-			console.log('Removing this option: ' + removeThis.value);
+			var removedIndex = removeThis.value;
 			removeThis.remove();
 
 			selectBoxLength = newLength;
-			if(newLength > selectBoxLength) {
-				selectBox.val(newLength + 1);
-				console.log('Trying to set selectBox index to +1: ' + (newLength + 1));
+			console.log('removedIndex: ' + removedIndex + ', oldLength: ' + oldLength + ', newLength: ' + newLength + ', selectBoxLength: ' + selectBoxLength);
+			if(removedIndex == 0 && newLength > 0) { //they removed the beginning of a still non-singular stack
+				selectBox.val(1); 
+				console.log('Removed something from the beginning of a non-singular stack');
 			}
-			else {
+			else if(removedIndex == newLength && newLength > 0) { //they removed the end of a still non-singular stack
+				selectBox.val(newLength - 1);
+				console.log('Removed something from the end of a non-singular stack');
+			}
+			else if(newLength > 0) { //they removed something from the middle of a stack.
+				//selectBox.val(newLength);
 				selectBox.val(newLength);
-				console.log('Trying to set selectBox index to +0: ' + newLength);
+				console.log('Removed something from the middle of a stack (length is therefore inferred to be >= 3')
+			}
+			else { //they removed the only entry in the stack
+				console.log('selectBox has no entries now');
 			}
 			
+
 			rebuildOptionValues();
 			updateSlideIndex();
 		});
@@ -152,11 +157,16 @@ jQuery(function($){
 		function updateSlideIndex() {
 			previewArea.empty();
 			var selected = selectBox.prop('options')[selectBox.prop('selectedIndex')];
-		    var slideshowIndex = selected.value;
-		    if($(selected).attr('name')) {
+			if(selected) {
+		   		var slideshowIndex = selected.value;
 			    var attachment = wp.media.attachment($(selected).attr('name')).attributes;
 			    setPreviewImage(attachment.url);
 			}
+			else{
+				uploadButton.hide();
+				emptyWarning.show();
+			}
+
 		}
 
 		/**
@@ -164,9 +174,7 @@ jQuery(function($){
 		 */
 		function rebuildOptionValues() {
 			var i; 
-			console.log("Rebuilding option values for selectBox legnth of " + selectBox.length);
 			for(i=0; i<selectBox.length + 1; i++) {
-				console.log(i + ', renaming object id ' + $(selectBox.prop('options')[i]).html())
 				$(selectBox.prop('options')[i]).attr('value', i)
 				$(selectBox.prop('options')[i]).html(i);
 			}
