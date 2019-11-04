@@ -77,30 +77,29 @@ jQuery(function($){
 		removeButton.on('click', function () {
 			var oldLength = selectBoxLength;
 			var newLength = selectBoxLength - 1;
-			if(selectBoxLength - 1 < 0) {
+			
+			if(selectBoxLength - 1 < 0) { //length should never go negative.
 				newLength = 0;
 			}
+
 			var removeThis = selectBox.prop('options')[selectBox.prop('selectedIndex')];
 			var removedIndex = removeThis.value;
 			removeThis.remove();
 
 			selectBoxLength = newLength;
-			console.log('removedIndex: ' + removedIndex + ', oldLength: ' + oldLength + ', newLength: ' + newLength + ', selectBoxLength: ' + selectBoxLength);
+
 			if(removedIndex == 0 && newLength > 0) { //they removed the beginning of a still non-singular stack
 				selectBox.val(1); 
-				console.log('Removed something from the beginning of a non-singular stack');
 			}
 			else if(removedIndex == newLength && newLength > 0) { //they removed the end of a still non-singular stack
 				selectBox.val(newLength - 1);
-				console.log('Removed something from the end of a non-singular stack');
 			}
 			else if(newLength > 0) { //they removed something from the middle of a stack.
 				//selectBox.val(newLength);
 				selectBox.val(newLength);
-				console.log('Removed something from the middle of a stack (length is therefore inferred to be >= 3')
 			}
 			else { //they removed the only entry in the stack
-				console.log('selectBox has no entries now');
+				//do nothing
 			}
 			
 			allowWidgetSaveChanges();
