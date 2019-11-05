@@ -39,6 +39,10 @@ class WP_Slideshow_Widget extends WP_Widget {
 		$defaults = array(
 			'title'	=> '',
 			'slideshow' => array(), 
+			'slippryjs_speed' => 800, 
+			'slippryjs_pause' => 3000, 
+			'slippryjs_pager' => true,
+			'slippryjs_controls'=> true,
 		);
 
 		return $defaults;
@@ -51,8 +55,6 @@ class WP_Slideshow_Widget extends WP_Widget {
 	 * @since 0.1
 	 */
 	public function widget( $args, $instance ) {
-		
-		extract( $args );
 
 		include( WPSW_INCLUDES . 'widget.php' );
 	}
@@ -63,12 +65,8 @@ class WP_Slideshow_Widget extends WP_Widget {
 	 * @since 0.1
 	 */
 	public function update( $new_instance, $old_instance ) {
-
-		$instance                     	= $old_instance;
-		$instance['title']            	= sanitize_text_field( $new_instance['title'] );
-		$instance['slideshow'] 			= isset($new_instance['slideshow']) ? $new_instance['slideshow'] : array();
-
-		return $instance;
+		
+		return $new_instance;
 
 	}
 
@@ -81,9 +79,6 @@ class WP_Slideshow_Widget extends WP_Widget {
 
 		// Merge the user-selected arguments with the defaults.
 		$instance = wp_parse_args( (array) $instance, $this->get_default_args() );
-
-		// Extract the array to allow easy use of variables.
-		extract( $instance );
 
 		// Loads the widget form.
 		include( WPSW_INCLUDES . 'widget_form.php' );

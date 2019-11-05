@@ -5,6 +5,31 @@
 	</label>
 	<input class="widefat" placeholder="none" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $instance['title'] ); ?>" />
 </p>
+<p>
+	<label for="<?php echo $this->get_field_id( 'slippryjs_pause' ); ?>">
+		<?php _e( 'Pause Time (in ms)', 'wp_slideshow_widget_plugin' ); ?>
+	</label>
+	<input class="widefat" placeholder="3000" id="<?php echo $this->get_field_id( 'slippryjs_pause' ); ?>" name="<?php echo $this->get_field_name( 'slippryjs_pause' ); ?>" type="number" value="<?php echo esc_attr( $instance['slippryjs_pause'] ); ?>" />
+</p>
+<p>
+	<label for="<?php echo $this->get_field_id( 'slippryjs_speed' ); ?>">
+		<?php _e( 'Transition Speed (in ms)', 'wp_slideshow_widget_plugin' ); ?>
+	</label>
+	<input class="widefat" placeholder="800" id="<?php echo $this->get_field_id( 'slippryjs_speed' ); ?>" name="<?php echo $this->get_field_name( 'slippryjs_speed' ); ?>" type="number" value="<?php echo esc_attr( $instance['slippryjs_speed'] ); ?>" />
+</p>
+<p>
+	<input type="hidden" name="<?php echo $this->get_field_name('slippryjs_pager'); ?>" value="">
+	<input class="checkbox" type="checkbox" value="1" id="<?php echo $this->get_field_id('slippryjs_pager'); ?>" name="<?php echo $this->get_field_name('slippryjs_pager'); ?>" <?php checked( $instance['slippryjs_pager'] ); ?> />
+	<label for="<?php echo $this->get_field_id('slippryjs_pager'); ?>">
+		<?php _e( 'Show Pagination?', 'wp_slideshow_widget_plugin' ); ?>
+	</label>
+	<br/>
+	<input type="hidden" name="<?php echo $this->get_field_name('slippryjs_controls'); ?>" value="">
+	<input class="checkbox" type="checkbox" value="1" id="<?php echo $this->get_field_id('slippryjs_controls'); ?>" name="<?php echo $this->get_field_name('slippryjs_controls'); ?>" <?php checked( $instance['slippryjs_controls'] ); ?> />
+	<label for="<?php echo $this->get_field_id('slippryjs_controls'); ?>">
+		<?php _e( 'Show Next/Prev Controls?', 'wp_slideshow_widget_plugin' ); ?>
+	</label>	
+</p>
 
 <p>
 	<h4><em>Add/Edit Slideshow Images</em></h4>
@@ -72,7 +97,6 @@ jQuery(function($){
 		submitButton.on('click', function() {
 			var i; 
 			var postName = "<?php echo $slideshow_data ?>";
-			console.log('input[name="' + postName + '"]');
 			$('input[name="' + postName + '"]').remove();
 			for(i=0; i<selectBox.children().length; i++) {
 				var attach_id = $(selectBox.prop('options')[i]).attr('name');
@@ -90,9 +114,16 @@ jQuery(function($){
 			}
 			else {
 				var selected = getSelectedObject();
-				var newIndex = parseInt(selected.value) + 1;
-				$(selected).after('<option value="' + newIndex + '">' + newIndex + '</option>');
-				selectBox.val(newIndex);
+				
+				if(selected) { //selectBox was populated, add an additional option
+					var newIndex = parseInt(selected.value) + 1;
+					$(selected).after('<option value="' + newIndex + '">' + newIndex + '</option>');
+					selectBox.val(newIndex);
+				}
+				else { //selectBox was empty
+					selectBox.append('<option value="0">0</option>');
+				}
+				
 				selectBoxLength++;
 				rebuildOptionValues();
 

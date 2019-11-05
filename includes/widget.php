@@ -12,5 +12,10 @@
 </div>
 
 <script>
-  jQuery('#out-of-the-box-demo').slippry();
+  jQuery('#out-of-the-box-demo').slippry({
+    speed: parseInt("<?php echo $instance['slippry_speed']; ?>"),
+    pause: parseInt("<?php echo $instance['slippry_speed']; ?>"),
+    pager: parseInt("<?php echo $instance['slippry_pager']; ?>"),
+    controls: parseInt("<?php echo $instance['slippry_controls']; ?>"),
+  });
 </script>
