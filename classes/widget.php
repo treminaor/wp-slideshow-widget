@@ -38,47 +38,12 @@ class WP_Slideshow_Widget extends WP_Widget {
 
 		$defaults = array(
 			'title'	=> '',
+			'slideshow' => array(), 
 		);
 
 		return $defaults;
 
 	}
-
-	/**
-	 * Grabs the array of images currently set for the slideshow.
-	 *
-	 * @since 0.1
-	 */
-	private function get_slideshow_array() {
-
-		return $slideshow_array;
-
-	}
-
-	/**
-	 * Adds a blank index to the slideshow array
-	 *
-	 * @since 0.1
-	 */
-	private function add_slide_index() {
-
-		array_push($slideshow_array, array("", ""));
-
-	}
-
-	/**
-	 * Removes the given index from the slideshow array
-	 *
-	 * @since 0.1
-	 */
-	private function remove_slide_index($index) {
-
-		if($index == null)
-			return;
-
-		array_splice($slideshow_array, $index, 1);
-	}
-
 
 	/**
 	 * Outputs the widget based on the arguments input through the widget controls.
@@ -88,8 +53,6 @@ class WP_Slideshow_Widget extends WP_Widget {
 	public function widget( $args, $instance ) {
 		
 		extract( $args );
-
-		$debugMode = true; //Note: If enabled, fallback is disabled for bad categories (i.e. the widget will not render if there is no matching press category found on the forum)
 
 		$html = "";
 
@@ -104,8 +67,9 @@ class WP_Slideshow_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 
-		$instance                     = $old_instance;
-		$instance['title']            = sanitize_text_field( $new_instance['title'] );
+		$instance                     	= $old_instance;
+		$instance['title']            	= sanitize_text_field( $new_instance['title'] );
+		$instance['slideshow'] 			= isset($new_instance['slideshow']) ? $new_instance['slideshow'] : array();
 
 		return $instance;
 

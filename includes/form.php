@@ -8,15 +8,17 @@
 
 <p>
 	<h4><em>Add/Edit Slideshow Images</em></h4>
-	<?php $slideshow_id = $this->get_field_id( 'slideshow' ); ?>
+	<?php $slideshow_id = $this->get_field_id( 'wpsw_select' ); ?>
+	<?php $slideshow_data = $this->get_field_name( 'slideshow[]' ); ?>
 	<label for="<?php echo $slideshow_id ?>">
 		<?php _e( 'Slideshow Position', 'wp_slideshow_widget_plugin' ); ?>
 	</label>
-	<select class="wp_slideshow_widget_slideshow" id="<?php echo $slideshow_id; ?>" name="<?php echo $slideshow_id; ?>" >
+	<select class="wp_slideshow_widget_slideshow" id="<?php echo $slideshow_id; ?>" name="<?php echo $this->get_field_name( 'wpsw_select[]' ); ?>" >
 		<?php
 			$index = 0;
-			foreach($this->get_slideshow_array() as $slide) {
-				echo "<option>$index</option>";
+			$slides = $instance['slideshow'];
+			foreach($slides as $slide) {
+				echo '<option name="'. $slide. '" value="' . $index . '">' . $index . '</option>';
 				$index++;
 			}
 		?>
@@ -31,44 +33,76 @@
 <hr/>
 
 <script>
+	/*
+	@todo: need to array-ify the selectBox options on form submission so that PHP seens the full list of objects and not just the selected one. Google says to do this on form submission from js by creating an array: https://stackoverflow.com/questions/15190464/how-do-i-post-all-options-in-a-select-list
+		In order to do this I need to catch the form save(), which is triggered from an input element. So far I can't get the selector to find the element. 
+	 */
 jQuery(function($){
 	$(document).ready(function() {	
 		var selectID = "<?php echo $slideshow_id ?>";
 		var selectBox = $('#' + selectID);
-		var selectBoxLength = selectBox.length - 1;
+		var selectBoxLength = selectBox.children().length;
 		var widgetContainer = selectBox.closest('.widget-content');
+		var widgetID = widgetContainer.parent().find('.widget-id').prop('value');
 		var emptyWarning = widgetContainer.children('#wpsw_empty_warning');
 		var previewArea = widgetContainer.children('#wpsw_image_preview');
 		var addButton = widgetContainer.children('#add_slide');
 		var removeButton = widgetContainer.children('#remove_slide');
 		var uploadButton = widgetContainer.children('.wpsw_upload_button');
+		var submitButton = widgetContainer.parent().find('input[name=savewidget]');
 		
 		var custom_uploader;
 		var attachment;
 
-		//Intialize form state for empty slideshow. By default the form php assumes the slide is populated with data on load.
+		//Intialize form state based on slideshow data
 		if(selectBoxLength == 0) {
 			uploadButton.hide();
 			selectBox.prop('disabled', true);
+			removeButton.prop('disabled', true);
 		}
+		else {
+			emptyWarning.hide();
+			uploadButton.html('Remove Image');
+			updateSlideIndex();
+		}
+
+		/**
+		 * Catch the form submission so we can send all selectBox option values instead of just the selected index.
+		 */
+		submitButton.on('click', function() {
+			var i; 
+			var postName = "<?php echo $slideshow_data ?>";
+			console.log('input[name="' + postName + '"]');
+			$('input[name="' + postName + '"]').remove();
+			for(i=0; i<selectBox.children().length; i++) {
+				var attach_id = $(selectBox.prop('options')[i]).attr('name');
+				if(attach_id)
+					widgetContainer.append('<input type="hidden" name="' + postName + '" value="' + attach_id + '"/>');
+			}
+		});
 
 		/**
 		 * Add a slide
 		 */
 		addButton.on('click', function () {
-			if($(getSelectedObject()).attr('name') || selectBoxLength == 0) {
-				selectBox.append('<option value="' + selectBoxLength + '">' + selectBoxLength + '</option>');
-				selectBox.val(selectBoxLength);
+			if(uploadButton.is(":visible") && uploadButton.html() == 'Upload Image') {
+				alert("You must add content to the current slide before adding another one.");
+			}
+			else {
+				var selected = getSelectedObject();
+				var newIndex = parseInt(selected.value) + 1;
+				$(selected).after('<option value="' + newIndex + '">' + newIndex + '</option>');
+				selectBox.val(newIndex);
 				selectBoxLength++;
-				
+				rebuildOptionValues();
+
 				emptyWarning.hide();
 				selectBox.prop('disabled', false);
+				removeButton.prop('disabled', false);
 				uploadButton.html('Upload Image');
 				uploadButton.show();
 				previewArea.empty();
 			}
-			else
-				alert("You must add content to the current slide before adding another one.");
 		});
 
 		/**
@@ -82,7 +116,7 @@ jQuery(function($){
 				newLength = 0;
 			}
 
-			var removeThis = selectBox.prop('options')[selectBox.prop('selectedIndex')];
+			var removeThis = getSelectedObject();
 			var removedIndex = removeThis.value;
 			removeThis.remove();
 
@@ -117,7 +151,7 @@ jQuery(function($){
 		uploadButton.on('click', function() {
 			if(uploadButton.html() == 'Remove Image') {
 				previewArea.empty();
-				$(selectBox.prop('options')[selectBox.prop('selectedIndex')]).attr('name', ''); 
+				$(getSelectedObject()).attr('name', ''); 
 				uploadButton.html('Upload Image');
 				return;
 			}
@@ -139,7 +173,7 @@ jQuery(function($){
 		        var attachment = custom_uploader.state().get('selection').first().toJSON();
 		        custom_uploader.close();
 		        uploadButton.html('Remove Image');
-		        $(selectBox.prop('options')[selectBox.prop('selectedIndex')]).attr('name', attachment.id);
+		        $(getSelectedObject()).attr('name', attachment.id);
 		        setPreviewImage(attachment.url);
 		        allowWidgetSaveChanges();
 		    })
@@ -151,6 +185,8 @@ jQuery(function($){
 		 */
 		function allowWidgetSaveChanges() {
 			addButton.trigger('change');
+			submitButton = widgetContainer.find('input[type=submit]');
+			console.log(submitButton);
 		}
 
 		/**
@@ -166,16 +202,19 @@ jQuery(function($){
 		 */
 		function updateSlideIndex() {
 			previewArea.empty();
-			var selected = selectBox.prop('options')[selectBox.prop('selectedIndex')];
+			var selected = getSelectedObject();
 			if(selected) {
-		   		var slideshowIndex = selected.value;
-			    var attachment = wp.media.attachment($(selected).attr('name')).attributes;
-			    setPreviewImage(attachment.url);
+			    var previewID = $(selected).attr('name');
+			    wp.media.attachment(previewID).fetch().then(function (data) {
+				  setPreviewImage(wp.media.attachment(previewID).get('url'));
+				});
+			    
 			}
 			else{
 				uploadButton.hide();
 				emptyWarning.show();
 				selectBox.prop('disabled', true);
+				removeButton.prop('disabled', true);
 			}
 
 		}
@@ -185,7 +224,7 @@ jQuery(function($){
 		 */
 		function rebuildOptionValues() {
 			var i; 
-			for(i=0; i<selectBox.length + 1; i++) {
+			for(i=0; i<selectBox.children().length; i++) {
 				$(selectBox.prop('options')[i]).attr('value', i)
 				$(selectBox.prop('options')[i]).html(i);
 			}
@@ -197,7 +236,9 @@ jQuery(function($){
 		 */
 		function setPreviewImage(attachment_url) {
 			previewArea.empty();
-		    previewArea.append('<img class="true_pre_image" src="' + attachment_url + '" style="max-height:100px;max-width:300px;display:block;" />');
+			if(attachment_url) {
+		    	previewArea.append('<img class="true_pre_image" src="' + attachment_url + '" style="max-height:100px;max-width:300px;display:block;" />');
+			}
 		}
 	});
 });
