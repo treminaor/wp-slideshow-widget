@@ -54,10 +54,7 @@ class WP_Slideshow_Widget extends WP_Widget {
 		
 		extract( $args );
 
-		$html = "";
-
-		echo $html;
-
+		include( WPSW_INCLUDES . 'widget.php' );
 	}
 
 	/**
@@ -89,7 +86,7 @@ class WP_Slideshow_Widget extends WP_Widget {
 		extract( $instance );
 
 		// Loads the widget form.
-		include( WPSW_INCLUDES . 'form.php' );
+		include( WPSW_INCLUDES . 'widget_form.php' );
 
 	}
 

@@ -55,6 +55,8 @@ class wp_slideshow_widget_plugin {
 
          // Set the constant path to the assets directory.
         define( 'WPSW_JS', WPSW_URI . trailingslashit( 'js' ) );
+
+        define( 'WPSW_VENDOR', WPSW_URI . trailingslashit( 'vendor' ) );
         
     }
 
@@ -72,8 +74,10 @@ class wp_slideshow_widget_plugin {
 
     public function enqueue_scripts()
     {
-        wp_register_style('wp-slideshow-widget', WPSW_CSS . 'widget.css', array(), '1.0');
-        wp_enqueue_style('wp-slideshow-widget');
+        wp_enqueue_style('wp-slideshow-widget', WPSW_CSS . 'widget.css', array(), '1.0');
+
+        wp_enqueue_style('slippry-css', WPSW_VENDOR . 'slippry/slippry.css', array(), '1.4.0');
+        wp_enqueue_script('slippry-js', WPSW_VENDOR . 'slippry/slippry.min.js', array('jquery'), '1.4.0');
     }
 
     public function register_widget() {
