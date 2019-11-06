@@ -43,6 +43,7 @@ class WP_Slideshow_Widget extends WP_Widget {
 			'slippryjs_pause' => 3000, 
 			'slippryjs_pager' => true,
 			'slippryjs_controls'=> true,
+			'slippryjs_adaptiveHeight'=> true,
 		);
 
 		return $defaults;

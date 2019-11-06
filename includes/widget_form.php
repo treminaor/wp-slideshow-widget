@@ -24,6 +24,12 @@
 		<?php _e( 'Show Pagination?', 'wp_slideshow_widget_plugin' ); ?>
 	</label>
 	<br/>
+	<input type="hidden" name="<?php echo $this->get_field_name('slippryjs_adaptiveHeight'); ?>" value="">
+	<input class="checkbox" type="checkbox" value="1" id="<?php echo $this->get_field_id('slippryjs_adaptiveHeight'); ?>" name="<?php echo $this->get_field_name('slippryjs_adaptiveHeight'); ?>" <?php checked( $instance['slippryjs_adaptiveHeight'] ); ?> />
+	<label for="<?php echo $this->get_field_id('slippryjs_adaptiveHeight'); ?>">
+		<?php _e( 'Adaptive Slider Height?', 'wp_slideshow_widget_plugin' ); ?>
+	</label>
+	<br/>
 	<input type="hidden" name="<?php echo $this->get_field_name('slippryjs_controls'); ?>" value="">
 	<input class="checkbox" type="checkbox" value="1" id="<?php echo $this->get_field_id('slippryjs_controls'); ?>" name="<?php echo $this->get_field_name('slippryjs_controls'); ?>" <?php checked( $instance['slippryjs_controls'] ); ?> />
 	<label for="<?php echo $this->get_field_id('slippryjs_controls'); ?>">

@@ -16,6 +16,7 @@ jQuery(function($){
   $(document).ready(function() {  
     var jspeed = parseInt("<?php echo $instance['slippryjs_speed']; ?>");
     var jpause = parseInt("<?php echo $instance['slippryjs_pause']; ?>");
+    var jadaptiveHeight = parseInt("<?php echo $instance['slippryjs_adaptiveHeight']; ?>");
     var jpager = parseInt("<?php echo $instance['slippryjs_pager']; ?>");
     var jcontrols = parseInt("<?php echo $instance['slippryjs_controls']; ?>");
 
@@ -24,6 +25,7 @@ jQuery(function($){
     slipprySettings.pause = (jpause ? jpause : 3000);
     slipprySettings.pager = (jpager ? true : false);
     slipprySettings.controls = (jcontrols ? true : false);
+    slipprySettings.adaptiveHeight = (jadaptiveHeight ? true : false);
 
     $('#out-of-the-box-demo').slippry(slipprySettings);
   });
