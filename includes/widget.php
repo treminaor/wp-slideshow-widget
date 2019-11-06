@@ -12,10 +12,20 @@
 </div>
 
 <script>
-  jQuery('#out-of-the-box-demo').slippry({
-    speed: parseInt("<?php echo $instance['slippry_speed']; ?>"),
-    pause: parseInt("<?php echo $instance['slippry_speed']; ?>"),
-    pager: parseInt("<?php echo $instance['slippry_pager']; ?>"),
-    controls: parseInt("<?php echo $instance['slippry_controls']; ?>"),
+jQuery(function($){
+  $(document).ready(function() {  
+    var jspeed = parseInt("<?php echo $instance['slippryjs_speed']; ?>");
+    var jpause = parseInt("<?php echo $instance['slippryjs_pause']; ?>");
+    var jpager = parseInt("<?php echo $instance['slippryjs_pager']; ?>");
+    var jcontrols = parseInt("<?php echo $instance['slippryjs_controls']; ?>");
+
+    var slipprySettings = new Object();
+    slipprySettings.speed = (jspeed ? jspeed : 800);
+    slipprySettings.pause = (jpause ? jpause : 3000);
+    slipprySettings.pager = (jpager ? true : false);
+    slipprySettings.controls = (jcontrols ? true : false);
+
+    $('#out-of-the-box-demo').slippry(slipprySettings);
   });
+});
 </script>
